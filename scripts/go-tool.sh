@@ -3,6 +3,8 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 TOOL="$(basename "$0" ".sh" | sed -E 's/^go-//g')"
+TOOL=build
+echo "tool: " $TOOL 
 
 set -e
 
@@ -17,6 +19,7 @@ x_defs=()
 x_def_errors=()
 
 while read -r line || [[ -n "$line" ]]; do
+	echo $line
 	if [[ "$line" =~ ^[[:space:]]*$ ]]; then
 		continue
 	elif [[ "$line" =~ ^([^[:space:]]+)[[:space:]]+(.*)[[:space:]]*$ ]]; then
