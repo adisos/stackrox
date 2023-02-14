@@ -22,10 +22,11 @@ any_version='[0-9]+\.[0-9]+\.'
 # roxctl-development-cmd prints the path to roxctl built with GOTAGS=''. It builds the binary if needed
 roxctl-development-cmd() {
   if [[ ! -x "${tmp_roxctl}/roxctl-dev" ]]; then
-    _uname="$(luname)"
+    #_uname="$(luname)"
     mkdir -p "$tmp_roxctl"
-    make -s "cli-${_uname}" GOTAGS='' 2>&3
-    mv "bin/${_uname}_amd64/roxctl" "${tmp_roxctl}/roxctl-dev"
+    #make -s "cli-${_uname}" GOTAGS='' 2>&3
+    #mv "bin/${_uname}_amd64/roxctl" "${tmp_roxctl}/roxctl-dev"
+    cp "bin/linux_amd64/roxctl" "${tmp_roxctl}/roxctl-dev"
   fi
   echo "${tmp_roxctl}/roxctl-dev"
 }
