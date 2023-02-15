@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stackrox/rox/pkg/errox"
 	"github.com/stackrox/rox/roxctl/common/environment"
+	"github.com/stackrox/rox/roxctl/common/printer"
 )
 
 type analyzeNetpolCommand struct {
@@ -21,8 +22,8 @@ type analyzeNetpolCommand struct {
 	focusWorkload         string
 
 	// injected or constructed values
-	env environment.Environment
-	//printer printer.ObjectPrinter
+	env     environment.Environment
+	printer printer.ObjectPrinter
 }
 
 // Command defines the netpol command tree

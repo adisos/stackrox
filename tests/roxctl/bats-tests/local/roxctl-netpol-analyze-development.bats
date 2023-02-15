@@ -23,6 +23,20 @@ teardown() {
   rm -f "$ofile"
 }
 
+
+@test "roxctl-development analyze netpol should return error on empty or non-existing directory" {
+  run roxctl-development analyze netpol "$out_dir" 
+  assert_failure
+  assert_line --partial "error in connectivity analysis"
+  assert_line --partial "no such file or directory"
+  echo "$output" >&3
+
+  run roxctl-development analyze netpol
+  assert_failure
+  assert_line --partial "accepts 1 arg(s), received 0"
+  echo "$output" >&3
+}
+
 @test "roxctl-development analyze netpol generates connlist output" {
   assert_file_exist "${test_data}/np-guard/netpols-analysis-example/ns.yaml"
   assert_file_exist "${test_data}/np-guard/netpols-analysis-example/netpols.yaml"
