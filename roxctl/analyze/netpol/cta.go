@@ -24,7 +24,7 @@ type netpolAnalyzer interface {
 func (cmd *analyzeNetpolCommand) analyzeNetpols(analyzer netpolAnalyzer) error {
 	conns, err := analyzer.ConnlistFromDirPath(cmd.inputFolderPath)
 	if err != nil {
-		return errors.Wrap(err, "error analyzing network policies")
+		return errors.Wrap(err, "error in connectivity analysis")
 	}
 	connsStr := analyzer.ConnectionsListToString(conns)
 	if err := cmd.ouputConnList(connsStr); err != nil {
