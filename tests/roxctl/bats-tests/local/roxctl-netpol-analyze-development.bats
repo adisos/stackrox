@@ -52,3 +52,80 @@ teardown() {
   assert_output --partial 'default/checkoutservice[Deployment] => default/cartservice[Deployment] : TCP 7070'
 
 }
+
+
+@test "roxctl-development analyze netpol stops on first error when run with --fail" {
+  mkdir -p "$out_dir"
+  write_yaml_to_file "$templated_fragment" "$(mktemp "$out_dir/templated-01-XXXXXX-file1.yaml")"
+  write_yaml_to_file "$templated_fragment" "$(mktemp "$out_dir/templated-02-XXXXXX-file2.yaml")"
+
+  run roxctl-development analyze netpol "$out_dir/" --remove --output-file=/dev/null --fail
+  assert_failure
+  assert_output --partial 'YAML document is malformed'
+  assert_output --partial 'file1.yaml'
+  refute_output --partial 'file2.yaml'
+}
+
+
+
+
+@test "roxctl-development analyze netpol produces no output when all yamls are templated" {
+  mkdir -p "$out_dir"
+  write_yaml_to_file "$templated_fragment" "$(mktemp "$out_dir/templated-XXXXXX.yaml")"
+
+  echo "Analyzing a corrupted yaml file '$templatedYaml'" >&3
+  run roxctl-development analyze netpol "$out_dir/"
+  assert_failure
+  assert_output --partial 'YAML document is malformed'
+  assert_output --partial 'no relevant Kubernetes resources found'
+}
+
+write_yaml_to_file() {
+  image="${1}"
+  templatedYaml="${2:-/dev/null}"
+  cat >"$templatedYaml" <<-EOF
+  cat $templatedYaml >&3 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: server
+        image: $image
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+EOF
+}
