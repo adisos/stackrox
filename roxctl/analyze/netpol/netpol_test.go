@@ -37,16 +37,16 @@ func (d *analyzeNetpolTestSuite) TestAnalyzeNetpol() {
 			inputFolderPath:       "testdata/minimal",
 			expectedAnalysisError: nil,
 		},
-		/*("treating warnings as errors": {
+		"treating warnings as errors": {
 			inputFolderPath:       "testdata/empty-yamls",
 			expectedAnalysisError: errNPGWarningsIndicator,
 			strict:                true,
-		},*/
-		/*"stopOnFistError": {
+		},
+		"stopOnFistError": {
 			inputFolderPath:       "testdata/dirty",
 			expectedAnalysisError: errNPGErrorsIndicator,
 			stopOnFirstErr:        true,
-		},*/
+		},
 		"output should be written to a single file": {
 			inputFolderPath:       "testdata/minimal",
 			expectedAnalysisError: nil,
@@ -100,60 +100,3 @@ func (d *analyzeNetpolTestSuite) TestAnalyzeNetpol() {
 	}
 
 }
-
-/*
-TODO:
-- handle : treating_warnings_as_errors : avoid having fatal error for empty resources in the input dir.
-- handle:s topOnFistError : debug why test is failing
-
-=== RUN   TestAnalyzeNetpolCommand/TestAnalyzeNetpol/treating_warnings_as_errors
-    netpol_test.go:84:
-                Error Trace:    C:\Users\847978756\npv\stackrox\roxctl\analyze\netpol\netpol_test.go:84
-                                                        C:\Users\847978756\npv\stackrox\roxctl\analyze\netpol\suite.go:91
-                Error:          Target error should be in err chain:
-                                expected: "there were warnings during execution"
-                                in chain: "error analyzing network policies: cannot produce connectivity list without k8s workloads"
-                                        "error analyzing network policies: cannot produce connectivity list without k8s workloads"
-                                        "cannot produce connectivity list without k8s workloads"
-                Test:           TestAnalyzeNetpolCommand/TestAnalyzeNetpol/treating_warnings_as_errors
---- FAIL: TestAnalyzeNetpolCommand (0.01s)
-    --- FAIL: TestAnalyzeNetpolCommand/TestAnalyzeNetpol (0.01s)
-        --- PASS: TestAnalyzeNetpolCommand/TestAnalyzeNetpol/happyPath (0.01s)
-        --- PASS: TestAnalyzeNetpolCommand/TestAnalyzeNetpol/not_existing_inputFolderPath_should_raise_'os.ErrNotExist'_error (0.00s)
-        --- FAIL: TestAnalyzeNetpolCommand/TestAnalyzeNetpol/treating_warnings_as_errors (0.00s)
-FAIL
-FAIL    github.com/stackrox/rox/roxctl/analyze/netpol   12.639s
-FAIL
-
-
-
-
-$ go test -v ./roxctl/analyze/netpol/
-=== RUN   TestAnalyzeNetpolCommand
-=== PAUSE TestAnalyzeNetpolCommand
-=== CONT  TestAnalyzeNetpolCommand
-=== RUN   TestAnalyzeNetpolCommand/TestAnalyzeNetpol
-=== RUN   TestAnalyzeNetpolCommand/TestAnalyzeNetpol/not_existing_inputFolderPath_should_raise_'os.ErrNotExist'_error
-=== RUN   TestAnalyzeNetpolCommand/TestAnalyzeNetpol/stopOnFistError
-    netpol_test.go:89:
-                Error Trace:    C:\Users\847978756\npv\stackrox\roxctl\analyze\netpol\netpol_test.go:89
-                                                        C:\Users\847978756\npv\stackrox\roxctl\analyze\netpol\suite.go:91
-                Error:          Target error should be in err chain:
-                                expected: "there were errors during execution"
-                                in chain: "error in connectivity analysis: YAML document is malformed: yaml: line 17: found character that cannot start any token"
-                                        "error in connectivity analysis: YAML document is malformed: yaml: line 17: found character that cannot start any token"
-                                        "YAML document is malformed: yaml: line 17: found character that cannot start any token"
-                                        "yaml: line 17: found character that cannot start any token"
-                Test:           TestAnalyzeNetpolCommand/TestAnalyzeNetpol/stopOnFistError
-=== RUN   TestAnalyzeNetpolCommand/TestAnalyzeNetpol/happyPath
---- FAIL: TestAnalyzeNetpolCommand (0.03s)
-    --- FAIL: TestAnalyzeNetpolCommand/TestAnalyzeNetpol (0.03s)
-        --- PASS: TestAnalyzeNetpolCommand/TestAnalyzeNetpol/not_existing_inputFolderPath_should_raise_'os.ErrNotExist'_error (0.00s)
-        --- FAIL: TestAnalyzeNetpolCommand/TestAnalyzeNetpol/stopOnFistError (0.01s)
-        --- PASS: TestAnalyzeNetpolCommand/TestAnalyzeNetpol/happyPath (0.02s)
-FAIL
-FAIL    github.com/stackrox/rox/roxctl/analyze/netpol   19.413s
-FAIL
-
-
-*/

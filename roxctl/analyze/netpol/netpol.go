@@ -49,7 +49,7 @@ func Command(cliEnvironment environment.Environment) *cobra.Command {
 	c.Flags().BoolVar(&analyzeNetpolCmd.stopOnFirstError, "fail", false, "fail on the first encountered error")
 	c.Flags().BoolVar(&analyzeNetpolCmd.removeOutputPath, "remove", false, "remove the output path if it already exists")
 	c.Flags().StringVarP(&analyzeNetpolCmd.outputFilePath, "output-file", "f", "", "save connlist output into a txt file")
-	c.Flags().StringVarP(&analyzeNetpolCmd.outputFilePath, "focus-workload", "", "", "focus connections of specified workload name in the output")
+	c.Flags().StringVarP(&analyzeNetpolCmd.focusWorkload, "focus-workload", "", "", "focus connections of specified workload name in the output")
 	return c
 }
 func (cmd *analyzeNetpolCommand) construct(args []string, c *cobra.Command) (netpolAnalyzer, error) {

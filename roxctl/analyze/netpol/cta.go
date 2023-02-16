@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	npguard "github.com/np-guard/netpol-analyzer/pkg/netpol/connlist"
-	npguardscan "github.com/np-guard/netpol-analyzer/pkg/netpol/scan"
 	"github.com/pkg/errors"
 )
 
@@ -18,7 +17,7 @@ var (
 type netpolAnalyzer interface {
 	ConnlistFromDirPath(dirPath string) ([]npguard.Peer2PeerConnection, error)
 	ConnectionsListToString(conns []npguard.Peer2PeerConnection) string
-	Errors() []npguardscan.FileProcessingError
+	Errors() []npguard.ConnlistError
 }
 
 func (cmd *analyzeNetpolCommand) analyzeNetpols(analyzer netpolAnalyzer) error {
