@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stackrox/rox/pkg/errox"
 	"github.com/stackrox/rox/roxctl/common/environment"
-	"github.com/stackrox/rox/roxctl/common/printer"
 )
 
 type analyzeNetpolCommand struct {
@@ -22,8 +21,7 @@ type analyzeNetpolCommand struct {
 	focusWorkload         string
 
 	// injected or constructed values
-	env     environment.Environment
-	printer printer.ObjectPrinter
+	env environment.Environment
 }
 
 // Command defines the netpol command tree
@@ -63,6 +61,9 @@ func (cmd *analyzeNetpolCommand) construct(args []string, c *cobra.Command) (net
 	}
 	if cmd.focusWorkload != "" {
 		opts = append(opts, npguard.WithFocusWorkload(cmd.focusWorkload))
+	}
+	if cmd.outputFilePath != "" {
+		cmd.outputToFile = true
 	}
 	return npguard.NewConnlistAnalyzer(opts...), nil
 }
