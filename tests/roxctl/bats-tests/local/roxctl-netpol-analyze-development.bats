@@ -82,6 +82,44 @@ teardown() {
   #echo "$output" >&3
 }
 
+@test "roxctl-development analyze netpol produces errors when some yamls are templated" {
+  mkdir -p "$out_dir"
+  write_yaml_to_file "$templated_fragment" "$(mktemp "$out_dir/templated-XXXXXX.yaml")"
+
+  assert_file_exist "${test_data}/np-guard/scenario-minimal-service/frontend.yaml"
+  assert_file_exist "${test_data}/np-guard/scenario-minimal-service/backend.yaml"
+  cp "${test_data}/np-guard/scenario-minimal-service/frontend.yaml" "$out_dir/frontend.yaml"
+  cp "${test_data}/np-guard/scenario-minimal-service/backend.yaml" "$out_dir/backend.yaml"
+
+  echo "Analyzing a directory where 1/3 of yaml files are templated '$out_dir/'" >&3
+  run roxctl-development analyze netpol "$out_dir/" --remove --output-file=/dev/null
+  assert_failure
+  assert_output --partial 'YAML document is malformed'
+  refute_output --partial 'no relevant Kubernetes resources found'
+}
+
+
+@test "roxctl-development analyze netpol produces warnings (or errors for --strict) when yamls are not K8s resources" {
+  mkdir -p "$out_dir"
+  assert_file_exist "${test_data}/np-guard/empty-yamls/empty.yaml"
+  assert_file_exist "${test_data}/np-guard/empty-yamls/empty2.yaml"
+  cp "${test_data}/np-guard/empty-yamls/empty.yaml" "$out_dir/empty.yaml"
+  cp "${test_data}/np-guard/empty-yamls/empty2.yaml" "$out_dir/empty2.yaml"
+
+  run roxctl-development analyze netpol "$out_dir/" --remove --output-file=/dev/null
+  assert_success
+  assert_output --partial 'Yaml document is not a K8s resource'
+  assert_output --partial 'no relevant Kubernetes resources found'  
+
+  run roxctl-development analyze netpol "$out_dir/" --remove --output-file=/dev/null --strict
+  assert_failure
+  assert_output --partial 'Yaml document is not a K8s resource'
+  assert_output --partial 'no relevant Kubernetes resources found'
+  assert_output --partial 'ERROR:'
+  assert_output --partial 'there were warnings during execution'
+}
+
+
 write_yaml_to_file() {
   image="${1}"
   templatedYaml="${2:-/dev/null}"
