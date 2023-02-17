@@ -29,27 +29,27 @@ teardown() {
   assert_failure
   assert_line --partial "error in connectivity analysis"
   assert_line --partial "no such file or directory"
-  echo "$output" >&3
+  #echo "$output" >&3
 
   run roxctl-development analyze netpol
   assert_failure
   assert_line --partial "accepts 1 arg(s), received 0"
-  echo "$output" >&3
+  #echo "$output" >&3
 }
 
 @test "roxctl-development analyze netpol generates connlist output" {
-  assert_file_exist "${test_data}/np-guard/netpols-analysis-example/ns.yaml"
-  assert_file_exist "${test_data}/np-guard/netpols-analysis-example/netpols.yaml"
-  assert_file_exist "${test_data}/np-guard/netpols-analysis-example/kubernetes-manifests.yaml"
+  assert_file_exist "${test_data}/np-guard/netpols-analysis-example-minimal/backend.yaml"
+  assert_file_exist "${test_data}/np-guard/netpols-analysis-example-minimal/frontend.yaml"
+  assert_file_exist "${test_data}/np-guard/netpols-analysis-example-minimal/netpols.yaml"
   echo "Writing connlist to ${ofile}" >&3
-  run roxctl-development analyze netpol "${test_data}/np-guard/netpols-analysis-example"
+  run roxctl-development analyze netpol "${test_data}/np-guard/netpols-analysis-example-minimal"
   assert_success
 
   
   #echo "$output" >&3
   echo "$output" > "$ofile"
   assert_file_exist "$ofile"
-  assert_output --partial 'default/checkoutservice[Deployment] => default/cartservice[Deployment] : TCP 7070'
+  assert_output --partial 'default/frontend[Deployment] => default/backend[Deployment] : TCP 9090'
 
 }
 
@@ -64,6 +64,7 @@ teardown() {
   assert_output --partial 'YAML document is malformed'
   assert_output --partial 'file1.yaml'
   refute_output --partial 'file2.yaml'
+  #echo "$output" >&3
 }
 
 
@@ -78,6 +79,7 @@ teardown() {
   assert_failure
   assert_output --partial 'YAML document is malformed'
   assert_output --partial 'no relevant Kubernetes resources found'
+  #echo "$output" >&3
 }
 
 write_yaml_to_file() {
