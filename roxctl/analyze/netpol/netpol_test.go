@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
+	"github.com/stackrox/rox/pkg/errox"
 	"github.com/stackrox/rox/roxctl/common/mocks"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,6 +20,7 @@ type analyzeNetpolTestSuite struct {
 }
 
 func (d *analyzeNetpolTestSuite) TestAnalyzeNetpol() {
+	outFile := d.T().TempDir() + "/out.txt"
 	cases := map[string]struct {
 		inputFolderPath       string
 		expectedAnalysisError error
@@ -50,8 +52,22 @@ func (d *analyzeNetpolTestSuite) TestAnalyzeNetpol() {
 		"output should be written to a single file": {
 			inputFolderPath:       "testdata/minimal",
 			expectedAnalysisError: nil,
-			outFile:               d.T().TempDir() + "/out.yaml",
+			outFile:               outFile,
 			removeOutputPath:      false,
+		},
+		"should return error that the file already exists": {
+			inputFolderPath:       "testdata/minimal",
+			expectedValidateError: errox.AlreadyExists,
+			expectedAnalysisError: nil,
+			outFile:               outFile,
+			removeOutputPath:      false,
+		},
+		"should override existing file": {
+			inputFolderPath:       "testdata/minimal",
+			expectedValidateError: nil,
+			expectedAnalysisError: nil,
+			outFile:               outFile,
+			removeOutputPath:      true,
 		},
 	}
 
@@ -70,7 +86,6 @@ func (d *analyzeNetpolTestSuite) TestAnalyzeNetpol() {
 				outputFilePath:        tt.outFile,
 				removeOutputPath:      tt.removeOutputPath,
 				env:                   env,
-				//printer:               nil,
 			}
 
 			if tt.outFile != "" {
@@ -94,6 +109,11 @@ func (d *analyzeNetpolTestSuite) TestAnalyzeNetpol() {
 				d.Assert().ErrorIs(err, tt.expectedAnalysisError)
 			} else {
 				d.Assert().NoError(err)
+			}
+
+			if tt.outFile != "" && tt.expectedAnalysisError == nil && tt.expectedValidateError == nil {
+				_, err := os.Stat(tt.outFile)
+				d.Assert().NoError(err) // out file should exist
 			}
 
 		})
