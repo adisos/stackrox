@@ -10,6 +10,7 @@ import (
 	"github.com/stackrox/rox/roxctl/common/environment"
 )
 
+// netpol analyzer
 type analyzeNetpolCommand struct {
 	// Properties that are bound to cobra flags.
 	stopOnFirstError      bool
